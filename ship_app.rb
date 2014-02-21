@@ -9,10 +9,6 @@ class ShipApp < Sinatra::Base
     @payload = JSON.parse(request.body.read).with_indifferent_access
   end
 
-  get "/" do
-    "Move along .."
-  end
-
   post "/get_shipments" do
     content_type :json
     request_id = payload[:request_id]
