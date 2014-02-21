@@ -16,7 +16,7 @@ class ShipApp < Sinatra::Base
     payload = params[:shipment]
 
     shipment = Service.new(payload).create
-    { request_id: request_id, summary: "Shipment #{shipment.to_s} was added" }.to_json
+    { request_id: request_id, summary: "Shipment #{shipment} was added" }.to_json
   end
 
   post "/update_shipment" do
@@ -25,7 +25,7 @@ class ShipApp < Sinatra::Base
     payload = params[:shipment]
     shipment = Service.new(payload).update
 
-    { request_id: request_id, summary: "Shipment #{shipment.to_s} was updated" }.to_json
+    { request_id: request_id, summary: "Shipment #{shipment} was updated" }.to_json
   end
   
   # Custom webhook
@@ -35,7 +35,7 @@ class ShipApp < Sinatra::Base
     payload = params[:shipment]
     shipment = Service.new(payload).cancel
 
-    { request_id: request_id, summary: "Shipment #{shipment.to_s} was canceled" }.to_json
+    { request_id: request_id, summary: "Shipment #{shipment} was canceled" }.to_json
   end
 end
 
@@ -60,18 +60,18 @@ class Service
   # Talk to you shipment api making, e.g.
   #   FedEx.create_shipment payload
   def create
-    "022014"
+    payload[:id]
   end
 
   # Talk to you shipment api making, e.g.
   #   FedEx.create_shipment payload
   def update
-    "022014"
+    payload[:id]
   end
 
   # Talk to you shipment api making, e.g.
   #   FedEx.cancel_shipment payload
   def cancel
-    "022014"
+    payload[:id]
   end
 end
