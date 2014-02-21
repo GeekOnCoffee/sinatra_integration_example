@@ -2,6 +2,10 @@ require 'sinatra'
 require 'json'
 
 class ShipApp < Sinatra::Base
+  get "/" do
+    "Move along .."
+  end
+
   post "/get_shipments" do
     content_type :json
     request_id = params[:request_id]
