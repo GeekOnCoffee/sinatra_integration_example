@@ -1,14 +1,21 @@
 require 'sinatra'
 require 'json'
+require 'active_support/core_ext/hash/indifferent_access'
 
 class ShipApp < Sinatra::Base
+  attr_reader :payload
+
+  before do
+    @payload = JSON.parse(request.body.read).with_indifferent_access
+  end
+
   get "/" do
     "Move along .."
   end
 
   post "/get_shipments" do
     content_type :json
-    request_id = params[:request_id]
+    request_id = payload[:request_id]
 
     shipments = Service.new(payload).shipments_since
     { request_id: request_id, shipments: shipments }.to_json
@@ -16,8 +23,7 @@ class ShipApp < Sinatra::Base
 
   post "/add_shipment" do
     content_type :json
-    request_id = params[:request_id]
-    payload = params[:shipment]
+    request_id = payload[:request_id]
 
     shipment = Service.new(payload).create
     { request_id: request_id, summary: "Shipment #{shipment} was added" }.to_json
@@ -25,20 +31,18 @@ class ShipApp < Sinatra::Base
 
   post "/update_shipment" do
     content_type :json
-    request_id = params[:request_id]
-    payload = params[:shipment]
-    shipment = Service.new(payload).update
+    request_id = payload[:request_id]
 
+    shipment = Service.new(payload).update
     { request_id: request_id, summary: "Shipment #{shipment} was updated" }.to_json
   end
   
   # Custom webhook
   post "/cancel_shipment" do
     content_type :json
-    request_id = params[:request_id]
-    payload = params[:shipment]
-    shipment = Service.new(payload).cancel
+    request_id = payload[:request_id]
 
+    shipment = Service.new(payload).cancel
     { request_id: request_id, summary: "Shipment #{shipment} was canceled" }.to_json
   end
 end
@@ -64,18 +68,18 @@ class Service
   # Talk to you shipment api making, e.g.
   #   FedEx.create_shipment payload
   def create
-    payload[:id]
+    payload[:shipment][:id]
   end
 
   # Talk to you shipment api making, e.g.
   #   FedEx.create_shipment payload
   def update
-    payload[:id]
+    payload[:shipment][:id]
   end
 
   # Talk to you shipment api making, e.g.
   #   FedEx.cancel_shipment payload
   def cancel
-    payload[:id]
+    payload[:shipment][:id]
   end
 end
